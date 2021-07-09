@@ -1,7 +1,7 @@
 <div class="svg-container">
     <h3>SVG Container</h3>
 
-    <button (click)="selectItem(0)">SVG 1</button>
-    <button (click)="selectItem(1)">SVG 2</button>
-    <ng-template svgHost></ng-template>
+    <button *ngFor="let item of svgItems" (click)="onSelectItem(item)">{{ item.data.name }}</button>
+    
+    <app-svg-item [svgItem] ="selectedSvgItem"></app-svg-item>
 </div>
