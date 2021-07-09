@@ -1,0 +1,15 @@
+<div id="main">
+    <div id="svg_container">
+        <svg #svgItem id="svg" width="100%"></svg>
+    </div>
+    <div id="some_content">
+        <h3>An animated SVG file</h3>
+        <h4>Using d3.js</h4>
+        <ul *ngIf="description">
+            <li *ngFor="let desc of description; let i = index ">
+                <p>id: {{ desc.id }}</p>
+                <p>class: {{ desc.class }}</p>
+                <p>awg: {{ desc.awg }}</p>
+            </li>
+    </ul>
+</div>
