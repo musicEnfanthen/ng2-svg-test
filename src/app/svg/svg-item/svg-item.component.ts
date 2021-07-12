@@ -13,6 +13,12 @@ import * as d3_fetch from 'd3-fetch';
  */
  export interface D3Selection extends Selection<any, any, any, any> {}
 
+export interface TkaNote {
+    id: string,
+    tka: string,
+    isChecked: boolean
+}
+
 @Component({
     selector: 'app-svg-item',
     templateUrl: './svg-item.component.html',
@@ -25,11 +31,15 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
 
     svg: D3Selection | undefined;
     svgRoot: D3Selection | undefined;
-    svgFilePath: string = '';
+    svgFilePath = '';
+
+    tkaNotes: TkaNote[] = [];
+    selectedTkaNotesList: TkaNote[] = [];
 
     description: {[key: string]: string}[] = [];
 
-    fillColor = 'rgb(0, 255, 0)';
+    fillColor = '#149b9e';
+    fillColorSelected = '#123455';
 
     constructor() { }
 
@@ -38,12 +48,11 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
 
     ngOnChanges(changes: SimpleChanges) {
         if (!changes.svgItem.isFirstChange()) {
-            this.loadSVG();
-        } 
+            this.reloadSVG();
+        }
     }
 
     ngAfterViewInit() {
-        console.log(this.svgElement)
         this.loadSVG();
     }
 
@@ -53,61 +62,155 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
     }
 
     reloadSVG():void {
-        this.svg = undefined;
-        this.svgRoot = undefined;
+        // Clear svg by removing all child node with D3
+        this.svg?.selectAll('*').remove();
+        this.svgRoot?.selectAll('*').remove();
+
+        // Clear description
+        this.description = [];
 
         this.loadSVG();
     }
 
     async getSVG() {
-        // fetch the SVG file: "xml" is the SVG XML DOM tree
+        // Fetch the SVG file: "xml" is the SVG XML DOM tree
         const svgFileXml = await d3_fetch.svg(this.svgFilePath)
-        console.log('svgFileXml', svgFileXml)
 
-        // get the reference to the svg element in the HTML template
-        let htmlSVG = undefined;
-        htmlSVG =  this.svgElement?.nativeElement;
-        // append the root element from the fetched file
+        // Get the reference to the svg element in the HTML template
+        const htmlSVG =  this.svgElement?.nativeElement;
+        // Append the root element from the fetched file
         htmlSVG?.appendChild(svgFileXml.getElementById('svg-root'));
 
-        // d3 objects for later use
+        // D3 objects for later use
         this.svg = d3_selection.select(htmlSVG);
         this.svgRoot = this.svg.select('#svg-root');
 
-        // get the svg element from the original SVG file
+        // Get the svg element from the original SVG file
         const xmlSVG = d3_selection.select(svgFileXml.getElementsByTagName('svg')[0]);
-        // copy its "viewBox" attribute to the svg element in the HTML template
+        // Copy its "viewBox" attribute to the svg element in the HTML template
         this.svg.attr('viewBox', xmlSVG.attr('viewBox'));
 
+        const tkaGroups = this.svgRoot.selectAll('g.TkA');
+        console.log('tkaGroups', tkaGroups)
 
-        let tkaGroups = undefined;
-        tkaGroups = this.svgRoot.selectAll('g');
-        console.log(tkaGroups);
-        let _self = this;
-        // select every path element in a g element and fill it red
+        const _self = this;
+
+        // Select every path element in a g element, draw an invisible selection rectangle and recolor the paths
         tkaGroups.each(function () {
-            let tkaPath = d3_selection.select(this).select('path');
-            tkaPath.on('mouseover', () => _self.onTkaSelect(this));
+            const groupEle = this;
+            const groupSelection = d3_selection.select(groupEle);
 
+            const id = groupSelection.attr('id');
+            const tka = groupSelection.attr('awg');
 
-            tkaPath.style('stroke', _self.fillColor)})
+            const tkaPaths = groupSelection.selectAll('path');
+
+            _self.tkaNotes.push({
+                'id': id,
+                'tka': tka,
+                'isChecked': false}
+            );
+
+            tkaPaths.each(function() {
+                const tkaPath = d3_selection.select(this);
+                const tkaPathBbox = (this as SVGSVGElement).getBBox();
+                groupSelection.append('rect').attr('width', tkaPathBbox.width)
+                                .attr('height', tkaPathBbox.height)
+                                .attr('x', tkaPathBbox.x)
+                                .attr('y', tkaPathBbox.y)
+                                .attr('fill', 'red')
+                                .attr('opacity', 0.0);
+
+                const tkaPathRect = groupSelection.selectAll('rect');
+                tkaPathRect.on('mouseover', () => _self.onTkaSelect(groupEle));
+
+                // if (tkaPath.attr('style').includes('fill')) {
+                //     tkaPath.style('stroke', _self.fillColor);
+                // }
+                // else {
+                //     tkaPath.style('fill', _self.fillColor);
+                // }
+            });
+        });
     }
 
 
     onTkaSelect(self: any): void {
+        console.log('self', self)
         const attributes = self.getAttributeNames();
-        console.log(attributes)
+        const tkaNote = d3_selection.select(self).attr('awg');
+        //console.log(attributes)
+        console.log(tkaNote)
+
         const test: any = {}
         attributes.map((attr: any) => {
-            console.log(attr)
             test[attr] = self.getAttribute(attr);
-            console.log(test)
         })
         this.description.splice(0, 1 , test);
 
-        console.log(this.description)
+        // console.log(this.description[0])
 
-        // return label;
+        // Return label;
     }
+
+    fetchSelectedTka() {
+        this.selectedTkaNotesList = this.tkaNotes.filter((value, index) => {
+            return value.isChecked
+        });
+    }
+
+    changeSelection() {
+        this.fetchSelectedTka();
+        this.tkaNotes.map((value) => {
+            if (value.isChecked) {
+                this.highlightSelection(value)
+            } else {
+                this.unhighlightSelection(value)
+            }
+        })
+    }
+
+    highlightSelection(value: TkaNote) {
+        console.log('highlight', value.id)
+        const groupSelection = this.svg?.select('#' + value.id);
+        console.log('selected ids', groupSelection)
+        const tkaPaths = groupSelection?.selectAll('path');
+
+        const _self = this;
+
+        tkaPaths?.each(function() {
+            const tkaPath = d3_selection.select(this);
+            console.log(tkaPath);
+            console.log(tkaPath.attr('style'));
+            if (tkaPath.attr('style').includes('fill')) {
+                tkaPath.style('stroke', _self.fillColor);
+            }
+            else {
+                tkaPath.style('fill', _self.fillColor);
+            }
+        });
+    }
+
+    unhighlightSelection(value: TkaNote) {
+        console.log('unhighlight', value.id)
+        const groupSelection = this.svg?.select('#' + value.id);
+        console.log('unselected ids', groupSelection)
+        const tkaPaths = groupSelection?.selectAll('path');
+
+        const _self = this;
+
+        tkaPaths?.each(function() {
+            const tkaPath = d3_selection.select(this);
+            console.log(tkaPath);
+            console.log(tkaPath.attr('style'));
+            if (tkaPath.attr('style').includes('stroke:#149b9e')) {
+                tkaPath.style('stroke', 'black');
+            }
+            else if (tkaPath.attr('style').includes('fill:#149b9e')) {
+                tkaPath.style('fill', 'black');
+            }
+        });
+    }
+
 
 }

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { SvgContainerComponent } from './svg-container/svg-container.component';
 import { SvgItemComponent } from './svg-item/svg-item.component';
@@ -19,7 +20,8 @@ import { M212TF1Component } from './svg-components/m212-tf1/m212-tf1.component';
         SvgComponent,
         M212TF1Component],
     imports: [
-        CommonModule
+        CommonModule,
+        FormsModule
     ],
     providers: [SvgLoadingService],
     exports: [

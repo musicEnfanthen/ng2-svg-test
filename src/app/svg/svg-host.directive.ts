@@ -1,4 +1,4 @@
-// tslint:disable: directive-selector
+// Tslint:disable: directive-selector
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({

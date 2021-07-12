@@ -6,10 +6,11 @@
         <h3>An animated SVG file</h3>
         <h4>Using d3.js</h4>
         <ul *ngIf="description">
-            <li *ngFor="let desc of description; let i = index ">
+            <li *ngFor="let desc of description; let i = index">
                 <p>id: {{ desc.id }}</p>
                 <p>class: {{ desc.class }}</p>
                 <p>awg: {{ desc.awg }}</p>
             </li>
-    </ul>
+        </ul>
+    </div>
 </div>
