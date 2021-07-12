@@ -8,7 +8,6 @@ import { SvgHostDirective } from './svg-host.directive';
 
 import { SvgLoadingService } from './svg-loading.service';
 import { SvgComponent } from './svg.component';
-import { M212TF1Component } from './svg-components/m212-tf1/m212-tf1.component';
 
 
 
@@ -17,8 +16,8 @@ import { M212TF1Component } from './svg-components/m212-tf1/m212-tf1.component';
         SvgContainerComponent,
         SvgItemComponent,
         SvgHostDirective,
-        SvgComponent,
-        M212TF1Component],
+        SvgComponent
+    ],
     imports: [
         CommonModule,
         FormsModule
