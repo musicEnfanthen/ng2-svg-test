@@ -180,13 +180,11 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
 
         tkaPaths?.each(function() {
             const tkaPath = d3_selection.select(this);
-            console.log(tkaPath);
-            console.log(tkaPath.attr('style'));
-            if (tkaPath.attr('style').includes('fill')) {
-                tkaPath.style('stroke', _self.fillColor);
+            if (tkaPath.attr('style').includes('font-family')) {
+                tkaPath.style('fill', _self.fillColor);
             }
             else {
-                tkaPath.style('fill', _self.fillColor);
+                tkaPath.style('stroke', _self.fillColor);
             }
         });
     }
@@ -201,13 +199,11 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
 
         tkaPaths?.each(function() {
             const tkaPath = d3_selection.select(this);
-            console.log(tkaPath);
-            console.log(tkaPath.attr('style'));
-            if (tkaPath.attr('style').includes('stroke:#149b9e')) {
-                tkaPath.style('stroke', 'black');
-            }
-            else if (tkaPath.attr('style').includes('fill:#149b9e')) {
+            if (tkaPath.attr('style').includes('font-family')) {
                 tkaPath.style('fill', 'black');
+            }
+            else {
+                tkaPath.style('stroke', 'black');
             }
         });
     }
