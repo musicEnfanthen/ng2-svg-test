@@ -37,31 +37,31 @@ export class M212TF1Component implements OnInit, AfterViewInit {
     }
 
     async getSVG() {
-        // fetch the SVG file: "xml" is the SVG XML DOM tree
+        // Fetch the SVG file: "xml" is the SVG XML DOM tree
         const svgFileXml = await d3_fetch.svg(this.path)
         console.log(svgFileXml)
 
-        // get the reference to the svg element in the HTML template
-        let htmlSVG = this.svgItem?.nativeElement;
-        // append the root element from the fetched file
+        // Get the reference to the svg element in the HTML template
+        const htmlSVG = this.svgItem?.nativeElement;
+        // Append the root element from the fetched file
         htmlSVG?.appendChild(svgFileXml.getElementById('svg-root'));
 
-        // d3 objects for later use
+        // D3 objects for later use
         this.svg = d3_selection.select(htmlSVG);
         this.svgRoot = this.svg.select('#svg-root');
 
-        // get the svg element from the original SVG file
+        // Get the svg element from the original SVG file
         const xmlSVG = d3_selection.select(svgFileXml.getElementsByTagName('svg')[0]);
-        // copy its "viewBox" attribute to the svg element in the HTML template
+        // Copy its "viewBox" attribute to the svg element in the HTML template
         this.svg.attr('viewBox', xmlSVG.attr('viewBox'));
 
 
-        let tkaGroups = this.svgRoot.selectAll('g')
+        const tkaGroups = this.svgRoot.selectAll('g')
         console.log(tkaGroups)
-        let _self = this;
-        // select every path element in a g element and fill it red
+        const _self = this;
+        // Select every path element in a g element and fill it red
         tkaGroups.each(function () {
-            let tkaPath = d3_selection.select(this).select('path');
+            const tkaPath = d3_selection.select(this).select('path');
             tkaPath.on('mouseover', () => _self.onTkaSelect(this));
 
 
@@ -84,7 +84,7 @@ export class M212TF1Component implements OnInit, AfterViewInit {
 
         console.log(this.description)
 
-        // return label;
+        // Return label;
     }
 
 }

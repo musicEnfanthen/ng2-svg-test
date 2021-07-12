@@ -2,6 +2,6 @@
     <h3>SVG Container</h3>
 
     <button *ngFor="let item of svgItems" (click)="onSelectItem(item)">{{ item.data.name }}</button>
-    
-    <app-svg-item [svgItem] ="selectedSvgItem"></app-svg-item>
+
+    <app-svg-item [svgItem]="selectedSvgItem"></app-svg-item>
 </div>
