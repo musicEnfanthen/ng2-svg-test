@@ -11,7 +11,7 @@ import * as d3_fetch from 'd3-fetch';
  *
  * It represents the selection of a d3 element.
  */
- export interface D3Selection extends Selection<any, any, any, any> {}
+export interface D3Selection extends Selection<any, any, any, any> {}
 
 export interface TkaNote {
     id: string,
@@ -35,11 +35,12 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
 
     tkaNotes: TkaNote[] = [];
     selectedTkaNotesList: TkaNote[] = [];
+    isAllNotesSelected: boolean = false;
 
     description: {[key: string]: string}[] = [];
 
     fillColor = '#149b9e';
-    fillColorSelected = '#123455';
+    selectionColor = 'red';
 
     constructor() { }
 
@@ -115,11 +116,11 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
                 const tkaPath = d3_selection.select(this);
                 const tkaPathBbox = (this as SVGSVGElement).getBBox();
                 groupSelection.append('rect').attr('width', tkaPathBbox.width)
-                                .attr('height', tkaPathBbox.height)
-                                .attr('x', tkaPathBbox.x)
-                                .attr('y', tkaPathBbox.y)
-                                .attr('fill', 'red')
-                                .attr('opacity', 0.0);
+                    .attr('height', tkaPathBbox.height)
+                    .attr('x', tkaPathBbox.x)
+                    .attr('y', tkaPathBbox.y)
+                    .attr('fill', 'red')
+                    .attr('opacity', 0.0);
 
                 const tkaPathRect = groupSelection.selectAll('rect');
                 tkaPathRect.on('mouseover', () => _self.onTkaSelect(groupEle));
@@ -153,60 +154,42 @@ export class SvgItemComponent implements OnChanges, OnInit, AfterViewInit {
         // Return label;
     }
 
-    fetchSelectedTka() {
+
+    changeAllNotesSelection() {
+        this.tkaNotes.map((value: TkaNote) => {
+            value.isChecked = this.isAllNotesSelected;
+        });
+        this.changeSelection()
+    }
+
+    changeSelection() {
+        this._fetchSelectedTka();
+        this.tkaNotes.map((value: TkaNote) => {
+            const color = value.isChecked ? this.selectionColor : 'black';
+            this._colorSelection(value, color)
+        })
+    }
+
+
+    private _fetchSelectedTka() {
         this.selectedTkaNotesList = this.tkaNotes.filter((value, index) => {
             return value.isChecked
         });
     }
 
-    changeSelection() {
-        this.fetchSelectedTka();
-        this.tkaNotes.map((value) => {
-            if (value.isChecked) {
-                this.highlightSelection(value)
-            } else {
-                this.unhighlightSelection(value)
-            }
-        })
-    }
-
-    highlightSelection(value: TkaNote) {
-        console.log('highlight', value.id)
+    private _colorSelection(value: TkaNote, color: string) {
         const groupSelection = this.svg?.select('#' + value.id);
-        console.log('selected ids', groupSelection)
         const tkaPaths = groupSelection?.selectAll('path');
-
-        const _self = this;
 
         tkaPaths?.each(function() {
             const tkaPath = d3_selection.select(this);
             if (tkaPath.attr('style').includes('font-family')) {
-                tkaPath.style('fill', _self.fillColor);
+                tkaPath.style('fill', color);
             }
             else {
-                tkaPath.style('stroke', _self.fillColor);
+                tkaPath.style('stroke', color);
             }
         });
     }
-
-    unhighlightSelection(value: TkaNote) {
-        console.log('unhighlight', value.id)
-        const groupSelection = this.svg?.select('#' + value.id);
-        console.log('unselected ids', groupSelection)
-        const tkaPaths = groupSelection?.selectAll('path');
-
-        const _self = this;
-
-        tkaPaths?.each(function() {
-            const tkaPath = d3_selection.select(this);
-            if (tkaPath.attr('style').includes('font-family')) {
-                tkaPath.style('fill', 'black');
-            }
-            else {
-                tkaPath.style('stroke', 'black');
-            }
-        });
-    }
-
 
 }
