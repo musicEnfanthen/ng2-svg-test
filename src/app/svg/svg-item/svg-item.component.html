@@ -1,21 +1,37 @@
+<h1>svg-text</h1>>
 <div id="main" *ngIf="svgItem">
-    <div id="tka-table" class="col-md-4">
-        <input type="checkbox" id="all-notes" name="all-notes" [(ngModel)]="isAllNotesSelected" (ngModelChange)="changeAllNotesSelection()">
-        <label for="all-notes"><span *ngIf="isAllNotesSelected">de</span>select all</label>
-        <ul>
-            <li *ngFor="let note of tkaNotes; let i = index">
-                <input type="checkbox" id="'note'+i" name="'note'+i" [(ngModel)]="note.isChecked" (ngModelChange)="changeSelection()">
-                <label for="'note'+i"> {{ note.tka }} </label>
-            </li>
-        </ul>
+    <div class="row">
+        <div id="tka-table" class="col-md-6">
+            <input type="checkbox" id="all-notes" name="all-notes" [(ngModel)]="isAllNotesSelected" (ngModelChange)="changeAllNotesSelection()">
+            <label for="all-notes"><span *ngIf="isAllNotesSelected">de</span>select all</label>
+            <ul class='nobullets'>
+                <li *ngFor="let note of tkaNotes; let i = index">
+                    <input type="checkbox" id="'note'+i" name="'note'+i" [(ngModel)]="note.isChecked" (ngModelChange)="changeSelection()">
+                    <label for="'note'+i"> {{ note.tka }} </label>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h4>No of Selected Tka: {{ selectedTkaNotesList.length }} </h4>
+            <ul>
+                <li *ngFor="let note of selectedTkaNotesList">{{ note.tka }}</li>
+            </ul>
+        </div>
     </div>
 
-    <div class="col-md-4">
-        <h4>No of Selected Tka: {{ selectedTkaNotesList.length }} </h4>
-        <ul>
-            <li *ngFor="let note of selectedTkaNotesList">{{ note.tka }}</li>
-        </ul>
-    </div>
+    <!-- <button type="button" class="btn btn-outline-secondary" ngbPopover="You see, I show up on hover!" triggers="mouseenter:mouseleave" popoverTitle="Pop title">
+        Hover over me!
+    </button>
+
+    <button id='gfg' type="button"
+    class="btn btn-primary"
+    placement="bottom"
+    ngbPopover="Angular ng bootstrap"
+    popoverTitle="GeeksforGeeks">
+    Click here
+    </button> -->
+
+
 
     <div id="svg_container">
         <svg #svgElement id="svg" width="100%"></svg>
