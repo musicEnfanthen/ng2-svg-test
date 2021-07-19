@@ -1,0 +1,7 @@
+<div class="svg-container">
+    <h3>SVG sketches</h3>
+
+    <button *ngFor="let item of svgItems" (click)="onSelectItem(item)">{{ item.data.name }}</button>
+
+    <awg-svg-sketch-item [svgItem]="selectedSvgItem"></awg-svg-sketch-item>
+</div>

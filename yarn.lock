@@ -1531,6 +1531,13 @@
   resolved "https://registry.yarnpkg.com/@types/d3-timer/-/d3-timer-3.0.0.tgz#e2505f1c21ec08bda8915238e397fb71d2fc54ce"
   integrity sha512-HNB/9GHqu7Fo8AQiugyJbv6ZxYz58wef0esl4Mv828w1ZKpAshw/uFWVDUcIB9KKFeFKoxS3cHY07FFgtTRZ1g==
 
+"@types/d3-tip@^3.5.5":
+  version "3.5.5"
+  resolved "https://registry.yarnpkg.com/@types/d3-tip/-/d3-tip-3.5.5.tgz#efaf942fa6984ddb8061db1023934598a76cbc8c"
+  integrity sha512-MWt1tlChRfHZtwBh8kIOrJo//TC5cdH5UN+KwcAs4wbFi6wnQJtk/MY4LBr/ZG7b2BQmRNJXu+EMI6NnH6VmxQ==
+  dependencies:
+    "@types/d3" "^3"
+
 "@types/d3-transition@*":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@types/d3-transition/-/d3-transition-3.0.1.tgz#c9a96125567173d6163a6985b874f79154f4cc3d"
@@ -1545,6 +1552,11 @@
   dependencies:
     "@types/d3-interpolate" "*"
     "@types/d3-selection" "*"
+
+"@types/d3@^3":
+  version "3.5.45"
+  resolved "https://registry.yarnpkg.com/@types/d3/-/d3-3.5.45.tgz#cceb1cd8f468b0ed1c96546ddefff3408d7463a7"
+  integrity sha512-wLICfMtjDEoAJie1MF6OuksAzOapRXgJy+l5HQVpyC1yMAlvHz2QKrrasUHru8xD6cbgQNGeO+CeyjOlKtly2A==
 
 "@types/d3@^7.0.0":
   version "7.0.0"

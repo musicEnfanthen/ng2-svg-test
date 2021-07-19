@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { NgbConfig } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,7 +11,10 @@ export class AppComponent implements OnInit {
   title = 'ng2-svg-test';
 
 
-  constructor() {  }
+  constructor(ngbConfig: NgbConfig) {
+    // Disable Bootstrap animation
+    ngbConfig.animation = false;
+   }
 
   ngOnInit() {
   }
