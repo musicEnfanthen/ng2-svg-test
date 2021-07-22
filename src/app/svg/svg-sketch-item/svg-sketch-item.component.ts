@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild, NgModule } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild, NgModule, Output, EventEmitter } from '@angular/core';
 
 import { SvgItem } from '../models/svg-item.model';
 
 import { BaseType, Selection } from 'd3-selection';
 import * as d3_selection from 'd3-selection';
 import * as d3_fetch from 'd3-fetch';
+import { NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 /**
@@ -43,6 +44,8 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
     // @ViewChild('pop', { static: false }) pop: any;
 
     @Input() svgItem?: SvgItem;
+    @Output() placeholderClick = new EventEmitter();
+    @Output() tipemit = new EventEmitter();
 
     svg: D3Selection | undefined;
     svgRoot: D3Selection | undefined;
@@ -159,13 +162,15 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
             })
             .on("mouseenter", function () {
                 // tooltip.style("opacity", "1").text('another tooltip');
+                _self.tipemit.emit('this is a tka');
 
             })
             .on('mouseout', () => {
                 sketchPlaceholderGroupSelection.select('rect').attr('opacity', 0.0);
-
+                _self.tipemit.emit();
             })
             .on('click', () => {
+                _self.placeholderClick.emit(_self.svgItem);     // TODO: link to the proper sketch, not just itself
             })
         });
 
@@ -211,6 +216,9 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
 
             tkaPathsSelection.each(function() {
                 const tkaPath: d3_selection.BaseType = this;
+                const tkaPathSelection: D3Selection = d3_selection.select(tkaPath)
+                const tkaPathParent: d3_selection.BaseType = tkaPathSelection.node().parentNode
+                const tkaPathParentSelection: D3Selection = d3_selection.select(tkaPathParent)
 
                 // create overlay box around tka-overlay-element
                 const tkaPathBbox: DOMRect = (tkaPath as SVGSVGElement).getBBox();
@@ -242,29 +250,32 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
                 // console.log('tkaPathsSelection', tkaPathsSelection);
 
 
-                tkaOverlayGroupSelection.on('mouseover', () => {    // TODO: only trigger if addedsigns are visible
-                    tkaGroupRect.attr('opacity', 0.2);
-                    if (tkaNote && !tkaNote.isChecked) {
-                        const color = _self.selectionColor;
-                        _self._colorSelection(tkaNote, color);
-                    };
-                    _self.onTkaSelect(tkaGroup);
-                    // console.log('tkapath', tkaPath);
-                    // d3_selection.select(tkaPath).attr('opacity', 1);
-                    // console.log('tkapath', tkaPath);
-                })
-                .on('mouseout', () => {
-                    tkaGroupRect.attr('opacity', 0.0);
-                    const color = (tkaNote && tkaNote.isChecked) ? _self.selectionColor : _self.deselectionColor;
-                    _self._colorSelection(tkaNote, color)
-                })
-                .on('click', () => {
-                    if (tkaNote) {
-                        tkaNote.isChecked = !tkaNote.isChecked;
-                    }
-                    _self._fetchSelectedTka();
-                    _self._checkAllNotesSelection();
-                });
+                tkaOverlayGroupSelection.on('mouseover', () => {            // NOTE: is it enough to only set the condition (addedSigns not hidden) for the mouseover part?
+                    if (!(tkaPathParentSelection.attr('opacity') === '0')) {
+                        tkaGroupRect.attr('opacity', 0.2);
+                        if (tkaNote && !tkaNote.isChecked) {
+                            const color = _self.selectionColor;
+                            _self._colorSelection(tkaNote, color);
+                        };
+                        _self.onTkaSelect(tkaGroup);
+
+                        // console.log('tkapath', tkaPath);
+                        // d3_selection.select(tkaPath).attr('opacity', 1);
+                        // console.log('tkapath', tkaPath);
+                        }
+                    })
+                    .on('mouseout', () => {
+                        tkaGroupRect.attr('opacity', 0.0);
+                        const color = (tkaNote && tkaNote.isChecked) ? _self.selectionColor : _self.deselectionColor;
+                        _self._colorSelection(tkaNote, color)
+                    })
+                    .on('click', () => {
+                        if (tkaNote) {
+                            tkaNote.isChecked = !tkaNote.isChecked;
+                        }
+                        _self._fetchSelectedTka();
+                        _self._checkAllNotesSelection();
+                    });
             });
         });
     }
@@ -302,7 +313,7 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
     // }
 
     toggleAllAddedSigns() {                                     // TODO: change only opacity of children, not the whole group?
-        const _self = this;
+        const _self = this;                                     // TODO: maybe also deselect all currently selected added signs(-groups)?
         this.addedSignsIds.forEach( function(id) {
             console.log('id', id)
             const addedSignGroup: D3Selection = _self.svg!.select('#' + id);

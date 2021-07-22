@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { SvgItem } from '../models/svg-item.model';
 
 @Component({
@@ -20,6 +21,14 @@ export class SvgSketchContainerComponent implements OnInit {
   onSelectItem(item: SvgItem): void {
     this.selectedSvgItem = item;
     console.log('CONTAINER #selectedSvgItem  ', this.selectedSvgItem);
+  }
+
+  toggleWithTka(tooltip: NgbTooltip, tka: string) {
+    if (tooltip.isOpen()) {
+      tooltip.close();
+    } else {
+      tooltip.open({tka});
+    }
   }
 
 }
