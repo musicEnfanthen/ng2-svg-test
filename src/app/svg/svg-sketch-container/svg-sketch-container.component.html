@@ -3,5 +3,9 @@
 
     <button *ngFor="let item of svgItems" (click)="onSelectItem(item)">{{ item.data.name }}</button>
     <ng-template #tipContent let-tka="tka">{{ tka }}</ng-template>
-    <awg-svg-sketch-item [svgItem]="selectedSvgItem" (placeholderClick)="onSelectItem($event)" [ngbTooltip]="tipContent" #t="ngbTooltip" triggers="manual" (tipemit)="toggleWithTka(t, $event)"></awg-svg-sketch-item>
+    <awg-svg-sketch-item [svgItem]="selectedSvgItem" (placeholderClick)="onSelectItem($event)"
+        [ngbTooltip]="tipContent" #t="ngbTooltip" triggers="manual" (tipemit)="toggleWithTka(t, $event)">
+    </awg-svg-sketch-item>
+    <!-- get mouseposition and place the tooltip there (which seems to be an even bigger pain,
+         as it's not built into bootstrap); https://ej2.syncfusion.com/angular/documentation/tooltip/position/ -->
 </div>

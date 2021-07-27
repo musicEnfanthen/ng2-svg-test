@@ -4,3 +4,11 @@
 .nobullets {
     list-style-type: none;
    }
+
+#tka-tooltip {
+    position: absolute;
+  }
+
+#tka-tooltip + .tooltip {
+    pointer-events: none;
+  }
