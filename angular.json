@@ -12,7 +12,7 @@
             },
             "root": "",
             "sourceRoot": "src",
-            "prefix": "app",
+            "prefix": "awg",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
@@ -28,7 +28,8 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.css"
+                            "src/styles.css",
+                            "node_modules/bootstrap/dist/css/bootstrap.min.css"
                         ],
                         "scripts": []
                     },
@@ -91,7 +92,8 @@
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.css"
+                            "src/styles.css",
+                            "node_modules/bootstrap/dist/css/bootstrap.min.css"
                         ],
                         "scripts": []
                     }
@@ -100,18 +102,6 @@
                     "builder": "@angular-eslint/builder:lint",
                     "options": {
                         "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
-                    }
-                },
-                "e2e": {
-                    "builder": "@angular-devkit/build-angular:protractor",
-                    "options": {
-                        "protractorConfig": "e2e/protractor.conf.js",
-                        "devServerTarget": "ng2-svg-test:serve"
-                    },
-                    "configurations": {
-                        "production": {
-                            "devServerTarget": "ng2-svg-test:serve:production"
-                        }
                     }
                 }
             }

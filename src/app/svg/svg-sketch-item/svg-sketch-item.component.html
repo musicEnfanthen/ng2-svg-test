@@ -1,6 +1,6 @@
-<h1>svg-text</h1>>
+<h1>svg-sketch</h1>>
 <div id="main" *ngIf="svgItem">
-    <div class="row">
+    <!-- <div class="row">
         <div id="tka-table" class="col-md-6">
             <input type="checkbox" id="all-notes" name="all-notes" [(ngModel)]="isAllNotesSelected" (ngModelChange)="changeAllNotesSelection()">
             <label for="all-notes"><span *ngIf="isAllNotesSelected">de</span>select all</label>
@@ -17,12 +17,27 @@
                 <li *ngFor="let note of selectedTkaNotesList">{{ note.tka }}</li>
             </ul>
         </div>
+    </div> -->
+
+    <div id="tka-table" class="col-md-6">
+        <input type="checkbox" id="all-signs" name="all-signs" [(ngModel)]="isAllAddedSignsHidden" (ngModelChange)="toggleAllAddedSigns()">
+        <label for="all-notes">hide all added signs</label>
     </div>
 
+    <!-- <button type="button" class="btn btn-outline-secondary" ngbPopover="You see, I show up on hover!" triggers="mouseenter:mouseleave" popoverTitle="Pop title">
+        Hover over me!
+    </button>
+
+    <button type="button" class="btn btn-outline-secondary mr-2" placement="top" ngbTooltip="Tooltip on top">
+    Tooltip on top
+    </button> -->
+
+
+    <div #popover="ngbPopover" ngbPopover="hello there" popoverTitle="title" triggers="manual">hello</div>
     <div id="svg_container">
         <svg #svgElement id="svg" width="100%"></svg>
     </div>
-    <div id="some_content">
+    <!-- <div id="some_content">
         <h3>An animated SVG file</h3>
         <h4>Using d3.js</h4>
         <ul *ngIf="description">
@@ -32,5 +47,5 @@
                 <p>awg: {{ desc.awg }}</p>
             </li>
         </ul>
-    </div>
+    </div> -->
 </div>
