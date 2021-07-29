@@ -18,10 +18,12 @@
             </ul>
         </div>
     </div>
+    <button *ngFor="let system of systems" (click)="onSystemSelect(system)">{{ system.id }}</button>
 
     <div id="svg_container">
         <svg #svgElement id="svg" width="100%"></svg>
     </div>
+
     <div id="some_content">
         <h3>An animated SVG file</h3>
         <h4>Using d3.js</h4>

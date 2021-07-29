@@ -23,6 +23,7 @@ export class SvgSketchContainerComponent implements OnInit {
     console.log('CONTAINER #selectedSvgItem  ', this.selectedSvgItem);
   }
 
+  // custom toggle for the tooltip in order to display the context coming from the emitter
   toggleWithTka(tooltip: NgbTooltip, tka: string) {
     if (tooltip.isOpen()) {
       tooltip.close();
