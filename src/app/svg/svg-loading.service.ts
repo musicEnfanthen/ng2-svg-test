@@ -9,8 +9,8 @@ export class SvgLoadingService {
 
     getSvgItems(): SvgItem[] {
         return [
-            new SvgItem({name: 'M212 TF1', path: 'assets/M212_TF1.svg'}),
-            new SvgItem({name: 'OP12/I SkI/2', path: 'assets/SkI_2.svg'})
+            new SvgItem({name: 'M212 TF1_1', path: 'assets//svg-texts/M212_TF1_3rd_proof_Seite1_pfad_210720.svg'}),
+            new SvgItem({name: 'M212 TF1_2', path: 'assets//svg-texts/M212_TF1_3rd_proof_Seite2_pfad_210720.svg'})
         ]
     }
 

@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { SvgItem } from './models/svg-item.model';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class SvgSketchLoadingService {
 
     getSvgItems(): SvgItem[] {

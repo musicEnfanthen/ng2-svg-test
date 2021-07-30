@@ -8,11 +8,6 @@ import * as d3_fetch from 'd3-fetch';
 import { NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 
-/**
- * The D3Selection interface.
- *
- * It represents the selection of a d3 element.
- */
 export interface D3Selection extends Selection<any, any, any, any> {}
 
 export interface TkaNote {
@@ -39,9 +34,7 @@ export const TkaList: TkAEntry[] = [
     styleUrls: ['./svg-sketch-item.component.css']
 })
 export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit {
-    @ViewChild('popover') popover: ElementRef | undefined;
     @ViewChild('svgElement') svgElement: ElementRef | undefined;
-    // @ViewChild('pop', { static: false }) pop: any;
 
     @Input() svgItem?: SvgItem;
     @Output() placeholderClick = new EventEmitter();
@@ -63,7 +56,6 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
     selectionColor = 'red';
     deselectionColor = 'black';
     addedColor = '#7d7d7d';
-    // that = this;
 
     constructor() { }
 
@@ -108,7 +100,7 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
 
         // Get the reference to the svg element in the HTML template
         const htmlSVG =  this.svgElement?.nativeElement;
-        const popover = _self.popover
+
         // Append the root element from the fetched file
         htmlSVG?.appendChild(svgFileXml.getElementById('svg-root'));
 
@@ -118,6 +110,7 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
 
         // Get the svg element from the original SVG file
         const xmlSVG: D3Selection = d3_selection.select(svgFileXml.getElementsByTagName('svg')[0]);
+
         // Copy its "viewBox" attribute to the svg element in the HTML template
         this.svg.attr('viewBox', xmlSVG.attr('viewBox'));
 
@@ -136,8 +129,6 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
             const sketchPlaceholderGroup: d3_selection.BaseType = this;
             const sketchPlaceholderGroupSelection: D3Selection = d3_selection.select(sketchPlaceholderGroup);
 
-            const tooltip = sketchPlaceholderGroup;
-
             // create overlay box
             const sketchPlaceholderGroupBbox: DOMRect = (sketchPlaceholderGroup as SVGSVGElement).getBBox();
             sketchPlaceholderGroupSelection.append('rect').attr('width', sketchPlaceholderGroupBbox.width)
@@ -154,16 +145,10 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
             console.log('sketchPlaceholdersGroupSelectionRect', sketchPlaceholderGroupSelection.select('rect'));
             sketchPlaceholderGroupSelection.on('mouseover', () => {
                 sketchPlaceholderGroupSelection.select('rect').attr('opacity', 0.2);
-                console.log('_self.popover', _self.popover)
-                console.log('popover!.nativeElement', popover!.nativeElement)
-                // popover?.show()
-
-                // window.alert(tooltip);
             })
             .on("mouseenter", function () {
-                // tooltip.style("opacity", "1").text('another tooltip');
+                // testing tooltip
                 _self.tipemit.emit('this is a tka');
-
             })
             .on('mouseout', () => {
                 sketchPlaceholderGroupSelection.select('rect').attr('opacity', 0.0);
@@ -208,9 +193,6 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
                     .attr('rx', tkaOverlayBoxCornerRadius)
                     .attr('class', 'tka-overlay-group-box');
 
-            // console.log('groupselection', tkaGroupSelection)
-            // console.log('g.tka-overlay-group', tkaOverlayGroupSelection)
-
             // process all child paths of groupSelection
             const tkaPathsSelection: D3Selection = tkaGroupSelection.selectAll('path'); // TODO: check for "path"
 
@@ -237,20 +219,9 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
 
                 // get actual svg of tkagrouprect
                 tkaGroupRect.each(function() {
-                    // console.log('tkaGroupRect', this as SVGSVGElement);
                 });
 
-                // get original style
-                // const prevStyle = d3_selection.select(tkaPath)
-                // console.log('prevStyle', prevStyle);
-                // const prevFill = prevStyle.style('fill')
-                // console.log('prevFill', prevFill);
-                // const prevStroke = prevStyle.style('stroke')
-                // console.log('prevStroke', prevStroke);
-                // console.log('tkaPathsSelection', tkaPathsSelection);
-
-
-                tkaOverlayGroupSelection.on('mouseover', () => {            // NOTE: is it enough to only set the condition (addedSigns not hidden) for the mouseover part?
+                tkaOverlayGroupSelection.on('mouseover', () => {
                     if (!(tkaPathParentSelection.attr('opacity') === '0')) {
                         tkaGroupRect.attr('opacity', 0.2);
                         if (tkaNote && !tkaNote.isChecked) {
@@ -258,23 +229,23 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
                             _self._colorSelection(tkaNote, color);
                         };
                         _self.onTkaSelect(tkaGroup);
-
-                        // console.log('tkapath', tkaPath);
-                        // d3_selection.select(tkaPath).attr('opacity', 1);
-                        // console.log('tkapath', tkaPath);
                         }
                     })
                     .on('mouseout', () => {
-                        tkaGroupRect.attr('opacity', 0.0);
-                        const color = (tkaNote && tkaNote.isChecked) ? _self.selectionColor : _self.deselectionColor;
-                        _self._colorSelection(tkaNote, color)
+                        if (!(tkaPathParentSelection.attr('opacity') === '0')) {
+                            tkaGroupRect.attr('opacity', 0.0);
+                            const color = (tkaNote && tkaNote.isChecked) ? _self.selectionColor : _self.deselectionColor;
+                            _self._colorSelection(tkaNote, color)
+                            }
                     })
                     .on('click', () => {
-                        if (tkaNote) {
-                            tkaNote.isChecked = !tkaNote.isChecked;
+                        if (!(tkaPathParentSelection.attr('opacity') === '0')) {
+                            if (tkaNote) {
+                                tkaNote.isChecked = !tkaNote.isChecked;
+                            }
+                            _self._fetchSelectedTka();
+                            _self._checkAllNotesSelection();
                         }
-                        _self._fetchSelectedTka();
-                        _self._checkAllNotesSelection();
                     });
             });
         });
@@ -292,9 +263,6 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
             test[attr] = tkaGroup?.getAttribute(attr);
         })
         this.description.splice(0, 1 , test);
-
-        // console.log(this.description[0])
-
         // Return label;
     }
 
@@ -319,9 +287,8 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
             const addedSignGroup: D3Selection = _self.svg!.select('#' + id);
             if (addedSignGroup.attr('opacity') === null) { addedSignGroup.attr('opacity', 1)};
             addedSignGroup.attr('opacity') === '0' ? addedSignGroup.attr('opacity', 1) : addedSignGroup.attr('opacity', 0.0);
-        })
-
-        }
+        });
+    }
 
     changeSelection() {
         this._fetchSelectedTka();
@@ -347,39 +314,6 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
         });
     }
 
-
-    // private _changeColor (value: TkaNote | undefined, style: string) {        // TODO: check with new SVG-files
-    //     if (!value) { return };
-    //     const tkaGroupSelection: D3Selection = this.svg!.select('#' + value.id);
-    //     const tkaGroupPathsSelection: D3Selection = tkaGroupSelection?.selectAll('path');
-
-    //     tkaGroupPathsSelection?.each(function() {
-    //         const tkaGroupPath: d3_selection.BaseType = this;
-    //         const tkaGroupPathSelection: D3Selection = d3_selection.select(tkaGroupPath);
-    //         console.log('ding', tkaGroupPathSelection.attr('style'));
-    //         console.log('ting', tkaGroupPathSelection.attr('style'));
-    //         console.log('style', style);
-
-    //         console.log('tkaGroupPathSelection', tkaGroupPathSelection)
-    //         if (tkaGroupPathSelection.attr('style').includes('font-family') && tkaGroupPathSelection.attr('style') === this.style) {
-    //             tkaGroupPathSelection.style('fill', this.selectionColor);
-    //             console.log('dong', tkaGroupPathSelection.attr('style'));
-    //         }
-    //         else if (tkaGroupPathSelection.attr('style').includes('font-family') && tkaGroupPathSelection.attr('style') != this.style) {
-    //             tkaGroupPathSelection.attr('style', this.style);
-    //             console.log('dang', tkaGroupPathSelection.attr('style'));
-    //         }
-    //         else if (tkaGroupPathSelection.attr('style') === this.style) {
-    //             tkaGroupPathSelection.style('stroke', this.selectionColor);
-    //             console.log('dung', tkaGroupPathSelection.attr('style'));
-    //         }
-    //         else {
-    //             tkaGroupPathSelection.attr('style', this.style);
-    //             console.log('doing', tkaGroupPathSelection.attr('style'));
-    //         }
-    //     });
-    // }
-
     private _colorSelection(value: TkaNote | undefined, color: string) {        // TODO: check with new SVG-files
         if (!value) { return };
         const tkaGroupSelection: D3Selection = this.svg!.select('#' + value.id);
@@ -390,9 +324,6 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
         tkaGroupPathsSelection?.each(function() {
             const tkaGroupPath: d3_selection.BaseType = this;
             const tkaGroupPathSelection: D3Selection = d3_selection.select(tkaGroupPath);
-            // console.log('this', tkaGroupPathSelection)
-            // console.log('that', tkaGroupPath)
-            // console.log('this parent', tkaGroupPathSelection.node().parentNode.parentNode)
             if (tkaGroupPathSelection.attr('style').includes('font-family')) {
                 tkaGroupPathSelection.style('fill', color);
             }
@@ -405,8 +336,8 @@ export class SvgSketchItemComponent implements OnChanges, OnInit, AfterViewInit 
             const tkaSignGroupPath: d3_selection.BaseType = this;
             const tkaSignGroupPathSelection: D3Selection = d3_selection.select(tkaSignGroupPath);
             const addedColor = color === 'black' ? '#7d7d7d' : 'red';                               // TODO: change to reference addedColor
-            if (tkaSignGroupPathSelection.attr('style').includes('font-family')) {
-                tkaSignGroupPathSelection.style('fill', addedColor);
+            if (tkaSignGroupPathSelection.attr('style').includes('font-family')) {                  // TODO: merge with the above once proper SVG-files are available
+                tkaSignGroupPathSelection.style('fill', addedColor);                                //       (check for addedSign-class in parent)
             }
             else {
                 tkaSignGroupPathSelection.style('stroke', addedColor);
