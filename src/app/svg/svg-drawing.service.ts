@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 
-import { BaseType, Selection } from 'd3-selection';
 import * as d3_selection from 'd3-selection';
 import * as d3_fetch from 'd3-fetch';
-import { SvgItemComponent } from './svg-item/svg-item.component';
+import { TkaList } from './svg-item/svg-item.component';
 
-export interface D3Selection extends Selection<any, any, any, any> {}
+export interface D3Selection extends d3_selection.Selection<any, any, any, any> {}
 
 export interface System {
     id: string,
@@ -14,8 +13,16 @@ export interface System {
 
 export interface TkaNote {
     id: string,
-    tka: string,
+    tka: TkAEntry | undefined,
     isChecked: boolean
+}
+
+export interface TkAEntry {
+    svgGroupId: string,
+    measure: number;
+    system: string;
+    position: string;
+    comment: string;
 }
 
 @Injectable()
@@ -27,7 +34,11 @@ export class SvgDrawingService {
     selectionColor = 'red';
     deselectionColor = 'black';
 
-    getSystemGroups(svgRoot: D3Selection, systems: System[]) {
+    fetchSvgFile(path: string): Promise<Document> {
+        return d3_fetch.svg(path);
+    }
+
+    getSystemGroups(svgRoot: D3Selection, systems: System[]): void {
         if (!svgRoot) { return };
 
         const systemGroups: D3Selection = svgRoot.selectAll('g.system')
@@ -42,8 +53,8 @@ export class SvgDrawingService {
         })
     }
 
-    getTkaGroups(svgRoot: D3Selection, tkaNotes: TkaNote[], description: any, selectedTakNotesList: TkaNote[], isAllNotesSelected: boolean) {
-        if (!svgRoot) { return };
+    getTkaGroups(svgRoot: D3Selection, tkaNotes: TkaNote[], description: any, selectedTakNotesList: TkaNote[], isAllNotesSelected: boolean): void {
+        if (!svgRoot) { return }
 
         const tkaGroups: D3Selection = svgRoot.selectAll('g.tka');
         console.log('tkaGroups', tkaGroups)
@@ -56,7 +67,9 @@ export class SvgDrawingService {
 
             // TODO:check for "id" and "awg" attributes
             const id: string = tkaGroupSelection.attr('id');
-            const tka: string = tkaGroupSelection.attr('awg');
+            const tka: TkAEntry| undefined = TkaList.find(entry => entry.svgGroupId === id);
+            console.log('id', id)
+            console.log('tka', tka)
 
             tkaNotes.push({
                 'id': id,
@@ -102,7 +115,7 @@ export class SvgDrawingService {
 
                 // show box over tkagroup on mouseover
                 const tkaGroupRect: D3Selection = tkaGroupSelection.selectAll('rect.tka-overlay-group-box');
-                const tkaNote: TkaNote | undefined = tkaNotes.find((x: TkaNote) => x.id === id);
+                const tkaNote: TkaNote | undefined = tkaNotes.find((note: TkaNote) => note.id === id);
 
                 tkaOverlayGroupSelection.on('mouseover', () => {
                     tkaGroupRect.attr('opacity', 0.2);
@@ -121,14 +134,14 @@ export class SvgDrawingService {
                     if (tkaNote) {
                         tkaNote.isChecked = !tkaNote.isChecked;
                     }
-                    _self.fetchSelectedTka(selectedTakNotesList, tkaNotes);
+                    selectedTakNotesList = _self.fetchSelectedTkaNotes(tkaNotes);
                     _self.checkAllNotesSelection(selectedTakNotesList, tkaNotes, isAllNotesSelected);
                 });
             })
         });
     };
 
-    colorSelection(svgRoot: D3Selection | undefined, value: TkaNote | undefined, color: string) {        // TODO: check with new SVG-files
+    colorSelection(svgRoot: D3Selection | undefined, value: TkaNote | undefined, color: string): void {        // TODO: check with new SVG-files
         if (!svgRoot || !value) { return };
         const tkaGroupSelection: D3Selection = svgRoot.select('#' + value.id);
         const tkaGroupPathsSelection: D3Selection = tkaGroupSelection?.selectAll('path');
@@ -145,13 +158,13 @@ export class SvgDrawingService {
         });
     }
 
-    onTkaSelect(tkaGroup: any, description: {[key: string]: string}[]): void {  // TODO: fetch corresponding tkaNote from table/file
-      if (!tkaGroup) { return };
+    onTkaSelect(tkaGroup: any, description: {[key: string]: string}[]): void {
+      if (!tkaGroup) { return }
 
       const attributes: string[] = tkaGroup.getAttributeNames();
-      const tkaNoteText: string = d3_selection.select(tkaGroup).attr('awg');
+      const tkaNote: TkAEntry| undefined = TkaList.find(entry => entry.svgGroupId === tkaGroup[attributes[0]]);
 
-      console.log('tkaNoteText', tkaNoteText)
+      console.log('tkaNote', tkaNote)
       console.log('attributes', attributes)
 
       const test: {[key:string]: string} = {}
@@ -161,7 +174,7 @@ export class SvgDrawingService {
       description.splice(0, 1 , test);
   }
 
-  checkAllNotesSelection(selectedTkaNotesList: TkaNote[], tkaNotes: TkaNote[], isAllNotesSelected: boolean) {
+  checkAllNotesSelection(selectedTkaNotesList: TkaNote[], tkaNotes: TkaNote[], isAllNotesSelected: boolean): void {
       if (selectedTkaNotesList.length === tkaNotes.length) {
           isAllNotesSelected = true
       }
@@ -170,9 +183,9 @@ export class SvgDrawingService {
       }
   }
 
-  fetchSelectedTka(selectedTkaNotesList: TkaNote[], tkaNotes: TkaNote[],) {
-      selectedTkaNotesList = tkaNotes.filter((value, index) => {
-          return value.isChecked
+    fetchSelectedTkaNotes(tkaNotes: TkaNote[],): TkaNote[] {
+      return tkaNotes.filter((note, index) => {
+          return note.isChecked
       });
   }
 }

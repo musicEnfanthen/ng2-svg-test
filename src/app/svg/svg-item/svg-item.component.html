@@ -7,14 +7,14 @@
             <ul class='nobullets'>
                 <li *ngFor="let note of tkaNotes; let i = index">
                     <input type="checkbox" id="'note'+i" name="'note'+i" [(ngModel)]="note.isChecked" (ngModelChange)="changeSelection()">
-                    <label for="'note'+i"> {{ note.tka }} </label>
+                    <label for="'note'+i"> {{ note.tka?.measure}} | {{ note.tka?.system}} | {{ note.tka?.comment }} </label>
                 </li>
             </ul>
         </div>
         <div class="col-md-6">
             <h4>No of Selected Tka: {{ selectedTkaNotesList.length }} </h4>
             <ul>
-                <li *ngFor="let note of selectedTkaNotesList">{{ note.tka }}</li>
+                <li *ngFor="let note of selectedTkaNotesList">{{ note.tka?.comment }}</li>
             </ul>
         </div>
     </div>
