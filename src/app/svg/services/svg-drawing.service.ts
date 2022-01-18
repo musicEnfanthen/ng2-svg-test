@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import * as d3_selection from 'd3-selection';
 import * as d3_fetch from 'd3-fetch';
-import { TkaList } from './svg-item/svg-item.component';
+import { TkaList } from '../text-view/svg-item/svg-item.component';
 
 export interface D3Selection extends d3_selection.Selection<any, any, any, any> {}
 

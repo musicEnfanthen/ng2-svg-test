@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SvgItem } from '../models/svg-item.model';
-import { SvgSketchLoadingService } from '../svg-sketch-loading.service';
+import { SvgSketchLoadingService } from '../services/svg-sketch-loading.service';
 
 @Component({
   selector: 'awg-sketch-view',

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { SvgItem } from '../models/svg-item.model';
+import { SvgItem } from '../../models/svg-item.model';
 
 @Component({
   selector: 'awg-svg-sketch-container',

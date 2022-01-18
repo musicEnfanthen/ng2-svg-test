@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { SvgItem } from './models/svg-item.model';
-import { SvgLoadingService } from './svg-loading.service';
+import { SvgLoadingService } from './services/svg-loading.service';
 
 @Component({
   selector: 'app-svg',

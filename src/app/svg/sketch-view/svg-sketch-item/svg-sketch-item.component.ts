@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild, NgModule, Output, EventEmitter } from '@angular/core';
 
-import { SvgItem } from '../models/svg-item.model';
+import { SvgItem } from '../../models/svg-item.model';
 
 import { BaseType, Selection } from 'd3-selection';
 import * as d3_selection from 'd3-selection';

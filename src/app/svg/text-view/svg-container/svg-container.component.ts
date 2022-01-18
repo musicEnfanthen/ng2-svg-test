@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { SvgItem } from '../models/svg-item.model';
+import { SvgItem } from '../../models/svg-item.model';
 
 @Component({
   selector: 'app-svg-container',
